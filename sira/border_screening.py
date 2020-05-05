@@ -3,24 +3,58 @@
 from .traveller_class import Traveller
 from .flight_time_class import FlightTime
 from .incubation_period_class import IncubationPeriod
+
+import numpy.random as rand
+    
+def _is_detected(detect_prob):
+    '''
+    Function to capture whether a traveller who has become symptomatic is 
+    detected as such, after undergoing border screening. In particular, this
+    function allows for an imperfect rate of detection
+    
+    Parameters
+    ----------
+    detect_prob : float
+        A value in the semi-open range (0,1], specifying the success rate of
+        screening; the probability that screening will detect a symptomatic 
+        traveller
+        
+    Returns
+    -------
+    detection : bool
+        Value describing whether a symptomatic traveller has been successfully
+        detected by the screening process or not
+    '''
+    if detect_prob == 1:
+        detection = True
+    else:
+        detection = (rand.random() < detect_prob)
+    return detection
     
 
 def border_screening(num_people=10, flight_dist = None, inc_dist = None, 
                       exp_dist = None, time_scale = 'hours', reporting = False,
-                      **kwargs):
+                      exit_scr_sens = 1, entry_scr_sens = 1, **kwargs):
     '''
     Function to explicitly run the modeling of a group of individuals, having
     been infected at some randomly distributed times prior, attempting to 
     take a flight to some destination country and subsequently trying to gain
     entry. Each infected person is allocated a randomly distributed 
     incubation period and a randomly distributed flight time. The model then 
-    tests if the person has become symptomatic according to their given 
-    incubation period, prior to boarding flight (at origin boarder), on flight 
+    tests if each person has become symptomatic, according to their given 
+    incubation period, prior to boarding flight (at origin border), on flight 
     (hence displaying symptoms at destination boarder), or not being 
-    asypmtomatic on arrival (thus becoming a community case in the destination
+    sypmtomatic on arrival (thus becoming a community case in the destination
     country). If an infected individual is detected as symptomatic at any 
-    boarder, they are marked as "DETECTED" at at this boarder and then removed
-    from the model 
+    boarder, they are marked as "DETECTED" at this boarder and then removed
+    from the model.
+    
+    The base model assumes that border screening is 100% effective at both the
+    origin border and destination border, and thus travellers who are
+    symptomatic prior to crossing of these borders will always be removed from
+    the model. Use of the parameters "exit_scr_sens" and "entry_scr_sens" then 
+    allows the users to introduce some probability of failure into these 
+    processes. 
     
     Parameters
     ----------
@@ -39,10 +73,24 @@ def border_screening(num_people=10, flight_dist = None, inc_dist = None,
         Distribution function to model the shape of the distribution of 
         times (in hours) taken from passengers becoming infected to 
         boarding flight to the destination country
+    time_scale : str
+        Parameter to define whether the incuabtion period has been defined over
+        a scale of hours, or days, as model requires incubation period to be 
+        given in the form of hours. Accepts values "hours" or "days"; if value 
+        "days" is passed, the program will convert the incubation period from
+        days to hours. If "hours" is given no further operation is undertaken.  
     reporting : bool
         True or False, describing whether user wishes for 
         detection/non-detection statistics to be printed to upon the completion
         of simulation
+    exit_scr_sens : float
+        To take value in the semi-open range (0,1], specifying the exit 
+        screening sensitivty; the probability that exit screening will detect
+        symptomatic cases, and hence remove them from the model
+    entry_scr_sens : float
+        To take value in the semi-open range (0,1], specifying the entry 
+        screening sensitivty; the probability that entry screening will detect
+        symptomatic cases, and hence remove them from the model
     **kwargs : dict
         Dictionary of dictionaries (with keys 'exp', 'inc' and 'flight') which
         contains the variables used to define the specific shape of the chosen
@@ -69,6 +117,13 @@ def border_screening(num_people=10, flight_dist = None, inc_dist = None,
                              }
                           )
     '''
+    
+    if not((0 < entry_scr_sens <= 1) and (0 < exit_scr_sens <= 1)):
+        print("ValueError: parameters entry_scr_sens and exit_scr_sen are \
+               probabilities, and hence must assume values in the range \
+               (0,1]")
+        return
+        
     
     # Count to record how many infected are detected at UK boarder
     people_detected_UK = 0
@@ -104,11 +159,13 @@ def border_screening(num_people=10, flight_dist = None, inc_dist = None,
         # Test to see if infected case has become symptomatic prior to boarding
         # flight, thus being detected at Chinese boarder
         if symp_onset <= depart_time:
-            people_detected_CHINA += 1
+            if _is_detected(exit_scr_sens):
+                people_detected_CHINA += 1
         # Test to see if infected case has become symptomatic during flight,
         # thus being detected or arrival at UK boarder
         elif symp_onset <= depart_time + flight_time:
-            people_detected_UK += 1
+            if _is_detected(entry_scr_sens):
+                people_detected_UK += 1
         # Else we assume case has gained entry to UK, thus will go on to become
         # a community case on UK soil
         else:
