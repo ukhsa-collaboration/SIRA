@@ -23,10 +23,10 @@ package_data={
   
 setup(
     name='sira',
-    description='Package containing simualtions which model and quantify the \
+    description='Package containing model which simulates and quantify the \
                  risk of importation for varying diseases, travel times and \
                  exposure mechanisms',
-    version='1.0.0',
+    version='1.1.0',
     long_description=long_description_file,
     author='Declan Bays',
     author_email='declan.bays@phe.gov.uk',
