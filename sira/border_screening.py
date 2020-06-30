@@ -1,8 +1,8 @@
 # Time scales dealt as hours
 
-from traveller_class import Traveller
-from flight_time_class import FlightTime
-from incubation_period_class import IncubationPeriod
+from .traveller_class import Traveller
+from .flight_time_class import FlightTime
+from .incubation_period_class import IncubationPeriod
 
 import numpy.random as rand
     
