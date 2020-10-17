@@ -31,7 +31,7 @@ The model then makes use of Monte Carlo simulation to imitate a number of travel
 
 The ratio of travellers being detected at the border, against the number of travellers successfully boarding their flight then measures the success rate of the implemented border screening.
 
-A scientific article which fully explores the theory behind this method is available at [medRxiv](https://doi.org/10.1101/2020.07.10.20150664).
+Scientific articles which fully explore the theory behind this method are available at medRxiv: [DOI:10.1101/2020.07.10.20150664](https://doi.org/10.1101/2020.07.10.20150664) and [DOI:10.1101/2020.10.02.20205757](http://doi.org/10.1101/2020.10.02.20205757).
 
 ----
 
