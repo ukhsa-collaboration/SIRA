@@ -26,12 +26,12 @@ The model then required two other arguments (with supporting parameters), descri
 The model then makes use of Monte Carlo simulation to imitate a number of travellers becoming infected sometime prior to boarding a flight, and then attempting to cross the border into the destination country. Each traveller, when initiated, is assigned a time of infection (prior to boarding), flight time, and incubation period distributed according to the inputted distributions. Each traveller is then progresses through the model according to the following algorithm:
 
 - If the traveller has become symptomatic prior to the flight, they do not fly and exit the model, recorded as a NON FLIER
-- If the traveller manages to board the plane, but becomes symptomatic during the flight they are detected at the destination border and exit the model, being recorded recorded as a BORDER DETECTION
+- If the traveller manages to board the plane, but becomes symptomatic during the flight they are detected at the destination border and exit the model, being recorded as a BORDER DETECTION
 - Else, it is assumed that the travellers incubation period has exceeded the time from becoming infected, to travelling to the destination country and crossing the border. They exit the model being recorded as a BORDER NONDETECTED
 
 The ratio of travellers being detected at the border, against the number of travellers successfully boarding their flight then measures the success rate of the implemented border screening.
 
-A scientific article which fully explores the theory behind this method is currently in the process of being produced and publish. A linked will be included when this is complete.
+Scientific articles which fully explore the theory behind this method are available at medRxiv: [DOI:10.1101/2020.07.10.20150664](https://doi.org/10.1101/2020.07.10.20150664) and [DOI:10.1101/2020.10.02.20205757](http://doi.org/10.1101/2020.10.02.20205757).
 
 ----
 
